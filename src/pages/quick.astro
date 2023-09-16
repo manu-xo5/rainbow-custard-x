@@ -1,0 +1,16 @@
+---
+let data = {"": ""}
+if (Astro.request.method === "POST") {
+  data = await Astro.request.formData();
+  const message = data.get("message");
+
+}
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout>
+  <pre>
+    {JSON.stringify(data, null, 2)}
+  </pre>
+  <a href="/">home</a>
+</Layout>

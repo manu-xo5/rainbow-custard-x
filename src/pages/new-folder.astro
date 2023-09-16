@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const emojis = []
+
+for (let i = 0x1f600; i <= 0x1f64f; i++) {
+  emojis.push(String.fromCodePoint(i))
+}
+
+// Now, emojis array contains a range of smiley emojis (U+1F600 to U+1F64F)
+
+console.log(emojis)
+---
+
+<Layout>
+  <div class="h-[66px] p-5 flex gap-5 items-center border-b border-primary">
+    <a href="/" class="w-6.5 inline-grid place-items-center aspect-square text-text-primary">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="9.30697" y1="0.394676" x2="0.306969" y2="7.39468" stroke="currentColor"></line>
+        <line x1="2.3254" y1="9.62037" x2="9.3254" y2="15.6204" stroke="currentColor"></line>
+        <line y1="7.5" x2="16" y2="7.5" stroke="currentColor"></line>
+      </svg>
+    </a>
+
+    <span class="text-title">New Folder</span>
+
+    <span class="w-6.5 aspect-square"></span>
+  </div>
+
+  <div class="mt-5 px-5">
+    <div class="text-center">
+      <span class="inline-grid place-items-center leading-none rounded-full text-icon aspect-square w-19 bg-primary outline-none text-center">
+        <span class="align-top">{emojis[4]}</span>
+      </span>
+      <p class="mt-2 text-base">Folder Icon</p>
+    </div>
+  </div>
+
+  <div class="mt-5 px-5">
+    <label class="block text-base">
+      Folder Icon
+      <input class="mt-2 w-full block py-1.5 px-2 bg-primary rounded-sm placeholder:text-border" placeholder="Ex. Untitled 101" />
+    </label>
+
+    <label class="mt-5 block text-base">
+      Add your first note
+      <input class="mt-2 w-full block py-1.5 px-2 bg-primary rounded-sm placeholder:text-border" placeholder="Note" />
+    </label>
+
+    <div class="mt-5 text-base block">
+      <p>Accent Background for notes in folder</p>
+
+      <label class="mt-2 inline-flex relative items-center p-2 bg-primary rounded-sm text-border gap-2">
+        <!-- wrong box bounding size -->
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M17.9191 19.6742C18.3846 19.6742 18.831 19.4893 19.1601 19.1601C19.4892 18.831 19.6741 18.3846 19.6741 17.9192V14.2575C19.6741 13.792 19.4892 13.3457 19.1601 13.0165C18.831 12.6874 18.3846 12.5025 17.9191 12.5025H12.5675L17.6158 7.45417C17.9421 7.1216 18.1249 6.67427 18.1249 6.20834C18.1249 5.74241 17.9421 5.29508 17.6158 4.9625L15.0266 2.37334C14.6949 2.04546 14.2472 1.86158 13.7808 1.86158C13.3144 1.86158 12.8667 2.04546 12.535 2.37334L7.49747 7.42167V1.94C7.49747 1.50903 7.32627 1.0957 7.02152 0.790954C6.71677 0.486207 6.30345 0.315002 5.87247 0.315002H1.95081C1.51983 0.315002 1.1065 0.486207 0.801757 0.790954C0.497011 1.0957 0.325806 1.50903 0.325806 1.94V16.9767C0.327807 17.6943 0.613791 18.3821 1.12127 18.8895C1.62875 19.397 2.31646 19.683 3.03414 19.685L17.9191 19.6742ZM7.49747 8.96L13.3041 3.1425C13.4314 3.01759 13.6025 2.9476 13.7808 2.9476C13.9591 2.9476 14.1303 3.01759 14.2575 3.1425L16.8466 5.73167C16.9716 5.85888 17.0415 6.03005 17.0415 6.20834C17.0415 6.38663 16.9716 6.55779 16.8466 6.685L7.49747 16.0342V8.96ZM1.40914 1.94C1.40914 1.79634 1.46621 1.65857 1.56779 1.55699C1.66937 1.4554 1.80715 1.39834 1.95081 1.39834H5.87247C6.01613 1.39834 6.15391 1.4554 6.25549 1.55699C6.35707 1.65857 6.41414 1.79634 6.41414 1.94V6.18667H1.40914V1.94ZM1.40914 7.27H6.41414V12.0692H1.40914V7.27ZM4.89747 18.5908L3.03414 18.6017C2.60316 18.6017 2.18984 18.4305 1.88509 18.1257C1.58034 17.821 1.40914 17.4076 1.40914 16.9767V13.1525H6.41414V16.9767C6.41231 17.3876 6.25483 17.7827 5.97341 18.0822C5.69199 18.3817 5.30754 18.5634 4.89747 18.5908ZM18.5908 17.9192C18.59 18.097 18.5189 18.2674 18.3931 18.3932C18.2674 18.5189 18.097 18.59 17.9191 18.5908H6.9558C7.16897 18.3143 7.32376 17.9973 7.41081 17.6592L11.4841 13.5858H17.9191C18.097 13.5867 18.2674 13.6577 18.3931 13.7835C18.5189 13.9093 18.59 14.0796 18.5908 14.2575V17.9192Z"
+            fill="currentColor"></path>
+          <path d="M3.91378 16.7849C4.41876 16.7849 4.82812 16.3755 4.82812 15.8706C4.82812 15.3656 4.41876 14.9562 3.91378 14.9562C3.40881 14.9562 2.99945 15.3656 2.99945 15.8706C2.99945 16.3755 3.40881 16.7849 3.91378 16.7849Z" fill="currentColor"></path>
+        </svg>
+
+        <span id="output-color" class="inline-block bg-border rounded-sm" style={{ width: '60px', height: '26px' }}></span>
+        <input id="color" type="color" class="absolute pointer-events-none opacity-0 left-1/2" />
+      </label>
+    </div>
+  </div>
+
+  <div class="fixed bottom-0 pb-5 px-5 w-full flex justify-between">
+    <button class="bg-primary rounded text-base py-1.5 px-2" type="button">Cancel</button>
+
+    <button class="bg-accent rounded text-base py-1.5 px-2" type="submit">Save</button>
+  </div>
+
+  <script>
+    document.querySelector('input#color').addEventListener('input', (e) => {
+      document.querySelector('#output-color').style.backgroundColor = e.target.value
+    })
+  </script>
+</Layout>
