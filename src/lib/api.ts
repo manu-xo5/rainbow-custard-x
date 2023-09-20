@@ -1,39 +1,47 @@
-import fs from "fs"
+import { doc, getDocs, addDoc, collection, getDoc } from 'firebase/firestore'
+import { db } from './firebase'
+import * as O from './O'
 
-type Note = {
-  uid: string;
-  folder: string;
-  text: string;
-  timestamp: string;
+const notesCollectionFor = (folderId: string) => collection(db, 'folders', folderId, 'notes')
+
+function qsToArray(qs) {
+  const arr = []
+  qs.forEach((doc) => {
+    arr.push({
+      id: doc.id,
+      ...doc.data(),
+    })
+  })
+  return arr
 }
 
-const db = new Map<string, Note>();
-_read().forEach(([uid, note]) => db.set(uid, note))
-export { db };
-
-export function postNote(note: Omit<Note, "uid">): Note {
-  const newNote: Note = {
-    ...note,
-    uid: Math.random().toString(16).substring(2),
-    timestamp: (new Date()).toISOString()
-  }
-
-  db.set(newNote.uid, newNote)
-  _write(Array.from(db.entries()))
-
-  return newNote;
+export function getFolders() {
+  return O.pipe(
+    0,
+    O.tryCatch(() => getDocs(collection(db, 'folders')).catch(() => [])),
+    O.bind(qsToArray)
+  )
 }
 
-export function getNote(query: string) {
-  const data = Array.from(db.values())
-  data.filter(_data => _data.uid.includes(query))
-  return data
+export function getFolder(id: string) {
+  return O.pipe(
+    0,
+    (() => getDocs(notesCollectionFor(id)).catch(error => error)),
+    O.bind(qsToArray),
+  )
 }
 
-function _write(payload: any) {
-  fs.writeFileSync("db", JSON.stringify(payload));
+export function saveFolder(body: { icon: string; title: string; first_note?: string; accentColor: string }) {
+  return O.pipe(
+    body,
+    filter<ObjectValues<typeof body>>(Boolean),
+    O.tryCatch((x: any) => addDoc(collection(db, 'folders'), x).catch(() => alert('api failed')))
+  )
 }
 
-export function _read() {
-  return JSON.parse(fs.readFileSync("./db", "utf-8"));
-}
+type ObjectValues<T> = T[keyof T]
+
+const filter =
+  <T>(fn: (x: T) => boolean) =>
+  (x: T) =>
+    Object.fromEntries<T>(Object.entries(x).filter(([_, value]) => fn(value)))

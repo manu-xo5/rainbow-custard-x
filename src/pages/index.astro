@@ -1,52 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import * as db from "../lib/api"
-let data;
-if (Astro.request.method === "POST") {
-  data = await Astro.request.formData();
-  db.postNote({
-    folder: data.get("folder"),
-    text: data.get("message"),
-  })
-}
+import Navbar from "../components/Navbar.astro"
+import FolderCard from "../components/FolderCard.astro"
 
-let allNotes = db.getNote();
+import {getFolders} from "../lib/api"
+
+const arr = await getFolders()
 ---
-<style>
-  --bg: zinc-700
-  --bg-elem: zinc-800
-  --border: zinc-500
-  --radius: sm md
-  --accent: blue-600
-</style>
 <Layout>
+  <Navbar title="Memo">
+    <a slot="left" href="/folders/edit">
+      Edit
+    </a>
 
-  <div class="relative">
-    <select class="block bg-primary capitalize font-semibold">
-      <option>time</option>
-      <option>a-z</option>
-    </select>
 
-    <ul class="bg-primary rounded-md border p-1.5 inline-grid gap-1.5 min-w-[calc(100vw*0.1)]">
-      <li class="text-zinc-300 font-bold">Folder 1</li>
+    <a slot="right" href="/new-folder">
+      <svg  width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="8.5" x2="8.5" y2="9" stroke="#E5E5E5"/>
+        <line x1="8.5" y1="10" x2="8.5" y2="17" stroke="#E5E5E5"/>
+        <line y1="8.5" x2="17" y2="8.5" stroke="#E5E5E5"/>
+      </svg>
+    </a>
+  </Navbar>
 
-      {/* all notes */}
-      {allNotes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map(note => note.text).map(message => 
-        <li class="bg-zinc-800 border-t border-zinc-500 [&:has(input:checked)]:bg-blue-600">
-          <label class="rounded-sm py-1.5 px-2.5 inline-block w-full">
-            <input type="checkbox" hidden />
-            {message}
-          </label>
-        </li>
-      )}
-    </ul>
-
-      <form class="sticky bottom-0" method="POST" enctype="multipart/form-data">
-        <input class="w-full block border border-zinc-500 font-inherit px-2.5 py-1.5 text-white bg-zinc-800" type="text" name="folder" value=""  required />
-        <input class="w-full block border border-zinc-500 font-inherit px-2.5 py-1.5 text-white bg-zinc-800" type="text" name="message" value="" required />
-
-        <button class="w-full font-semibold px-2.5 py-1.5 bg-blue-600 rounded-sm">Send</button>
-      </form>
-    </div>
+  <main>
+    {arr.map(folderItem => (
+      <a href={`folder/${folderItem.id}/notes/`}>
+        <FolderCard {...folderItem} last_note={folderItem.note} />
+      </a>
+    ))}
+  </main>
 </Layout>
-

@@ -1,0 +1,16 @@
+---
+const {title} = Astro.props;
+---
+<div class="h-[66px] p-5 flex gap-5 items-center border-b border-primary justify-between border-b border-border">
+  <span class="w-6.5 inline-grid place-items-center aspect-square text-text-primary">
+    <slot name="left" >
+    </slot>
+  </span>
+
+  <span class="text-title">{title}</span>
+
+  <span class="w-6.5 inline-grid place-items-center aspect-square text-text-primary">
+    <slot name="right">
+    </slot>
+  </span>
+</div>
