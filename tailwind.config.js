@@ -40,7 +40,8 @@ module.exports = {
     plugin(({addBase, theme}) => {
       addBase({
         "html": {
-          color: theme("colors.text-primary")
+          color: theme("colors.text-primary"),
+          backgroundColor: theme("colors.secondary")
         }
       })
     })
