@@ -1,0 +1,80 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Navbar from '@/components/Navbar.astro'
+import { getNotes, getFolder, deleteNotes } from '@/lib/api'
+import * as O from '@/lib/O'
+
+if (Astro.request.method === 'POST') {
+  await deleteNotes({ folder_id: [Astro.params.id], selected_notes: (await Astro.request.formData()).getAll('selected_notes') })
+  return Astro.redirect(`/folder/${Astro.params.id}/notes`)
+}
+
+const someFolder = getFolder(Astro.params.id)
+const someData = getNotes(Astro.params.id)
+
+const folder = await someFolder
+const data = await someData
+if (folder == null || !folder.title) {
+  return Astro.redirect('/404')
+}
+---
+
+<Layout>
+  <style is:inline>
+    .grow-wrap {
+      display: grid;
+    }
+    .grow-wrap::after {
+      content: attr(data-replicated-value) ' ';
+      white-space: pre-wrap;
+      visibility: hidden;
+      height: 100%;
+      min-height: 64px;
+    }
+
+    .grow-wrap > .target,
+    .grow-wrap::after {
+      font: inherit;
+      padding: 0.5rem;
+      word-wrap: break-word;
+      text-wrap: unrestricted;
+      /* Place on top of each other */
+      grid-area: 1 / 1 / 2 / 2;
+    }
+
+    .note-container:has(:checked) .target {
+      outline: 2px solid blue;
+      outline-offset: 0px;
+    }
+  </style>
+
+  <Navbar title="Memo">
+    <button form="main" slot="left" class="text-accent"> Delete</button>
+
+    <a slot="right" class="text-base" href={`/folder/${Astro.params.id}/notes`}>Cancel</a>
+  </Navbar>
+
+  <main>
+    <div class="flex py-4.5 px-5 border-b border-primary items-center">
+      <div class="h-[14px] leading-[14px]">{folder.icon}</div>
+      <div class="title capitalize">{folder.title}</div>
+
+      <div class="last_updated text-base text-border ml-auto">Last Update: 19/09</div>
+    </div>
+
+    <div>
+      <form method="POST" id="main">
+        {
+          data.map((note: any) => (
+            <div class="note-container m-5">
+              <label class="grow-wrap text-base leading-[24px]" data-replicated-value={note.note}>
+                <pre class="target bg-primary rounded-sm w-full block outline-none" readonly>{note.note}</pre>
+                <input hidden id={note.id} type="checkbox" name="selected_notes" value={note.id} />
+              </label>
+            </div>
+          ))
+        }
+      </form>
+    </div>
+  </main>
+</Layout>

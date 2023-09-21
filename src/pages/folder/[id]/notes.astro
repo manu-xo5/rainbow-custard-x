@@ -1,0 +1,124 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Navbar from '@/components/Navbar.astro'
+import BackArrow from '@/icons/back.svg?raw'
+import { getNotes, getFolder, updateNote, addNote } from '@/lib/api'
+import * as O from '@/lib/O'
+
+let fd;
+let _ =
+  Astro.request.method === 'POST' && (fd = await Astro.request.formData()).get("_action") === "new_note"
+    ? (
+      await O.pipe(
+        0,
+        () => Object.fromEntries(fd),
+        O.tryCatch((body) => addNote(body))
+      )
+    ) : Astro.request.method === 'POST' ?
+     await O.pipe(
+        fd,
+        Object.fromEntries,
+        O.tryCatch((body) => updateNote(body.folder_id, body.note_id, String(body.note).trim()))
+      )
+    : null
+
+const someData = getNotes(Astro.params.id)
+const someFolder = getFolder(Astro.params.id)
+const data = await someData
+const folder = await someFolder
+
+if (folder == null || !folder.title) {
+  return Astro.redirect('/404')
+}
+---
+
+<Layout>
+  <Navbar title="Memo">
+    <a slot="left" href="/">
+      <Fragment set:html={BackArrow} />
+    </a>
+
+    <a slot="right" class="text-base" href={`/folder/${Astro.params.id}/notes-edit`}>Edit</a>
+  </Navbar>
+
+  <style is:inline>
+    .grow-wrap {
+      display: grid;
+    }
+    .grow-wrap::after {
+      content: attr(data-replicated-value) ' ';
+      white-space: pre-wrap;
+      visibility: hidden;
+      height: 100%;
+    }
+
+    .grow-wrap > textarea,
+    .grow-wrap::after {
+      font: inherit;
+      padding: 0.5rem;
+      word-wrap: break-word;
+      text-wrap: unrestricted;
+
+      /* Place on top of each other */
+      grid-area: 1 / 1 / 2 / 2;
+    }
+  </style>
+
+  <main>
+    <div class="flex py-4.5 px-5 border-b border-primary items-center">
+      <div class="h-[14px] leading-[14px]">{folder.icon}</div>
+      <div class="title capitalize">{folder.title}</div>
+
+      <div class="last_updated text-base text-border ml-auto">Last Update: 19/09</div>
+    </div>
+
+    <div>
+      {
+        data.map((note: any) => (
+          <form method="POST" class="notes-form m-5">
+            <div class="grow-wrap text-base leading-[24px]" data-replicated-value={note.note}>
+              <input type="hidden" name="folder_id" value={Astro.params.id} />
+              <input type="hidden" name="note_id" value={note.id} />
+              <textarea
+                name="note"
+                oninput="
+                this.parentNode.dataset.replicatedValue = this.value;
+                queueSubmit(this);
+                "
+                class="bg-primary rounded-sm w-full block outline-none"
+              >{note.note}</textarea>
+            </div>
+          </form>
+        ))
+      }
+
+      <form method="POST" class="notes-form m-5">
+        <div class="grow-wrap text-base leading-[24px]" data-replicated-value="">
+          <input type="hidden" name="folder_id" value={Astro.params.id} />
+          <input type="hidden" name="_action" value="new_note" />
+          <textarea name="note" oninput="
+          this.parentNode.dataset.replicatedValue = this.value;
+          queueSubmit(this);
+          "
+          class="bg-primary rounded-sm w-full block outline-none"
+          placeholder="Add New Note..."
+          ></textarea>
+        </div>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+const state = new Map()
+const queueSubmit = function (el) {
+  if (state.has(el)) {
+    clearTimeout(state.get(el))
+  }
+  const timerId = setTimeout(() => {
+    el.form.submit()
+  }, 1500)
+
+  state.set(el, timerId)
+}
+</script>

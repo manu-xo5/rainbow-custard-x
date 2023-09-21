@@ -1,4 +1,4 @@
-const plugin = require("tailwindcss/plugin")
+const plugin = require('tailwindcss/plugin')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
@@ -14,6 +14,7 @@ module.exports = {
       spacing: {
         sm: '1.5em 2.5em',
         md: '2.5em 3.5em',
+        4.5: '1.125rem',
       },
       borderRadius: {
         sm: '5px',
@@ -37,13 +38,13 @@ module.exports = {
     },
   },
   plugins: [
-    plugin(({addBase, theme}) => {
+    plugin(({ addBase, theme }) => {
       addBase({
-        "html": {
-          color: theme("colors.text-primary"),
-          backgroundColor: theme("colors.secondary")
-        }
+        html: {
+          color: theme('colors.text-primary'),
+          backgroundColor: theme('colors.secondary'),
+        },
       })
-    })
+    }),
   ],
 }

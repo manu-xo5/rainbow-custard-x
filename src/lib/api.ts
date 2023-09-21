@@ -1,4 +1,4 @@
-import { doc, getDocs, addDoc, collection, getDoc } from 'firebase/firestore'
+import { doc, deleteDoc, getDocs, addDoc, setDoc, collection, getDoc, writeBatch } from 'firebase/firestore'
 import { db } from './firebase'
 import * as O from './O'
 
@@ -26,8 +26,8 @@ export function getFolders() {
 export function getFolder(id: string) {
   return O.pipe(
     0,
-    (() => getDocs(notesCollectionFor(id)).catch(error => error)),
-    O.bind(qsToArray),
+    O.tryCatch(() => getDoc(doc(collection(db, 'folders'), id))),
+    O.bind((x) => x.data())
   )
 }
 
@@ -35,7 +35,48 @@ export function saveFolder(body: { icon: string; title: string; first_note?: str
   return O.pipe(
     body,
     filter<ObjectValues<typeof body>>(Boolean),
-    O.tryCatch((x: any) => addDoc(collection(db, 'folders'), x).catch(() => alert('api failed')))
+    O.tryCatch((x: any) => addDoc(collection(db, 'folders'), x))
+  )
+}
+
+export function getNotes(id: string) {
+  return O.pipe(
+    0,
+    O.tryCatch(() => getDocs(notesCollectionFor(id))),
+    O.bind(qsToArray)
+  )
+}
+
+export function updateNote(folderId: string, id: string, note: string) {
+  return O.pipe(
+    0,
+    O.tryCatch(() => setDoc(doc(notesCollectionFor(folderId), id), { note }, { merge: true })),
+    O.bind(Boolean)
+  )
+}
+
+export function addNote(body: Record<string, string>) {
+  return O.pipe(
+    0,
+    O.tryCatch(() => addDoc(notesCollectionFor(body.folder_id), body)),
+    O.bind(Boolean)
+  )
+}
+
+export function deleteNotes(body: Record<string, any[]>) {
+  const docIdsToDelete = body.selected_notes
+
+  const batch = writeBatch(db)
+
+  docIdsToDelete.forEach((docId) => {
+    const docRef = doc(collection(db, 'folders', String(body.folder_id), 'notes'), docId)
+    batch.delete(docRef)
+  })
+
+  return O.pipe(
+    0,
+    O.tryCatch(() => batch.commit()),
+    O.bind(Boolean)
   )
 }
 
