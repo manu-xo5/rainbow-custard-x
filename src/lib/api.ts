@@ -1,4 +1,4 @@
-import { doc, deleteDoc, getDocs, addDoc, setDoc, collection, getDoc, writeBatch } from 'firebase/firestore'
+import { doc, orderBy, query, deleteDoc, getDocs, addDoc, setDoc, collection, getDoc, writeBatch } from 'firebase/firestore'
 import { db } from './firebase'
 import * as O from './O'
 
@@ -41,16 +41,16 @@ export function saveFolder(body: { icon: string; title: string; first_note?: str
 
 export function getNotes(id: string) {
   return O.pipe(
-    0,
-    O.tryCatch(() => getDocs(notesCollectionFor(id))),
+    notesCollectionFor(id),
+    O.tryCatch((query) => getDocs(query)),
     O.bind(qsToArray)
   )
 }
 
 export function updateNote(folderId: string, id: string, note: string) {
   return O.pipe(
-    0,
-    O.tryCatch(() => setDoc(doc(notesCollectionFor(folderId), id), { note }, { merge: true })),
+    notesCollectionFor(folderId),
+    O.tryCatch((collection) => setDoc(doc(collection, id), { note }, { merge: true })),
     O.bind(Boolean)
   )
 }

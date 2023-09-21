@@ -2,23 +2,24 @@
 import Layout from '@/layouts/Layout.astro'
 import Navbar from '@/components/Navbar.astro'
 import BackArrow from '@/icons/back.svg?raw'
+import Loader from '@/icons/loader.svg?raw'
 import { getNotes, getFolder, updateNote, addNote } from '@/lib/api'
 import * as O from '@/lib/O'
 
-let fd;
+let fd
 let _ =
-  Astro.request.method === 'POST' && (fd = await Astro.request.formData()).get("_action") === "new_note"
-    ? (
-      await O.pipe(
+  Astro.request.method === 'POST' && (fd = await Astro.request.formData()).get('_action') === 'new_note'
+    ? await O.pipe(
         0,
         () => Object.fromEntries(fd),
         O.tryCatch((body) => addNote(body))
       )
-    ) : Astro.request.method === 'POST' ?
-     await O.pipe(
+    : Astro.request.method === 'POST'
+    ? await O.pipe(
         fd,
         Object.fromEntries,
-        O.tryCatch((body) => updateNote(body.folder_id, body.note_id, String(body.note).trim()))
+        O.tryCatch((body) => updateNote(body.folder_id, body.note_id, String(body.note).trim())),
+        (_) => console.count('hit ' + fd.get('note'))
       )
     : null
 
@@ -66,24 +67,41 @@ if (folder == null || !folder.title) {
 
   <main>
     <div class="flex py-4.5 px-5 border-b border-primary items-center">
-      <div class="h-[14px] leading-[14px]">{folder.icon}</div>
-      <div class="title capitalize">{folder.title}</div>
+      <div class="h-[14px] leading-[14px]">{folder.icon}</div>&nbsp;
+      <div class="title capitalize flex items-center">
+        {folder.title}
+        <span id="indicator" class="fill-accent ml-2.5 htmx-indicator">
+          <Fragment set:html={Loader} />
+        </span>
+      </div>
 
       <div class="last_updated text-base text-border ml-auto">Last Update: 19/09</div>
     </div>
 
-    <div>
+    <div id="notes-list">
       {
         data.map((note: any) => (
-          <form method="POST" class="notes-form m-5">
+          <form
+            method="POST"
+            class="notes-form m-5"
+            hx-get="/abs"
+            hx-trigger="hold"
+            hx-select="body"
+            hx-target="body"
+          >
             <div class="grow-wrap text-base leading-[24px]" data-replicated-value={note.note}>
               <input type="hidden" name="folder_id" value={Astro.params.id} />
               <input type="hidden" name="note_id" value={note.id} />
               <textarea
+                id={note.id}
+                hx-trigger="keyup changed delay:1000"
+                hx-post=""
+                hx-swap="none"
+                hx-sync="this:replace"
+                hx-indicator="#indicator"
                 name="note"
                 oninput="
                 this.parentNode.dataset.replicatedValue = this.value;
-                queueSubmit(this);
                 "
                 class="bg-primary rounded-sm w-full block outline-none"
               >{note.note}</textarea>
@@ -92,33 +110,24 @@ if (folder == null || !folder.title) {
         ))
       }
 
-      <form method="POST" class="notes-form m-5">
+      <form class="notes-form m-5">
         <div class="grow-wrap text-base leading-[24px]" data-replicated-value="">
           <input type="hidden" name="folder_id" value={Astro.params.id} />
           <input type="hidden" name="_action" value="new_note" />
-          <textarea name="note" oninput="
-          this.parentNode.dataset.replicatedValue = this.value;
-          queueSubmit(this);
-          "
-          class="bg-primary rounded-sm w-full block outline-none"
-          placeholder="Add New Note..."
-          ></textarea>
+          <textarea
+            name="note"
+            hx-trigger="keyup changed delay:1000"
+            hx-post=""
+            hx-select="#notes-list"
+            hx-target="#notes-list"
+            hx-sync="this:replace"
+            oninput="
+            this.parentNode.dataset.replicatedValue = this.value;
+            "
+            class="bg-primary rounded-sm w-full block outline-none"
+            placeholder="Add New Note..."></textarea>
         </div>
       </form>
     </div>
   </main>
 </Layout>
-
-<script is:inline>
-const state = new Map()
-const queueSubmit = function (el) {
-  if (state.has(el)) {
-    clearTimeout(state.get(el))
-  }
-  const timerId = setTimeout(() => {
-    el.form.submit()
-  }, 1500)
-
-  state.set(el, timerId)
-}
-</script>
