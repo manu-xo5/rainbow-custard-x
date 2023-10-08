@@ -2,7 +2,6 @@
 import Layout from '@/layouts/Layout.astro'
 import Navbar from '@/components/Navbar.astro'
 import { getNotes, getFolder, deleteNotes } from '@/lib/api'
-import * as O from '@/lib/O'
 
 if (Astro.request.method === 'POST') {
   await deleteNotes({ folder_id: [Astro.params.id], selected_notes: (await Astro.request.formData()).getAll('selected_notes') })
@@ -21,6 +20,9 @@ if (folder == null || !folder.title) {
 
 <Layout>
   <style is:inline>
+    .gradiant {
+      background-image: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.4) 100%);
+    }
     .grow-wrap {
       display: grid;
     }
@@ -56,7 +58,7 @@ if (folder == null || !folder.title) {
   </Navbar>
 
   <main>
-    <div class="flex py-4.5 px-5 border-b border-primary items-center">
+    <div class="flex py-3 px-5 border-b border-primary items-center">
       <div class="h-[14px] leading-[14px]">{folder.icon}</div>
       <div class="title capitalize">{folder.title}</div>
 
@@ -69,7 +71,11 @@ if (folder == null || !folder.title) {
           data.map((note: any) => (
             <div class="note-container m-5">
               <label class="grow-wrap text-base leading-[24px]" data-replicated-value={note.note}>
-                <pre class="target bg-primary rounded-sm w-full block outline-none" readonly>{note.note}</pre>
+                <pre
+                style={{
+                  backgroundColor: folder.accentColor !== "#000000" ? folder.accentColor :  "#777" 
+                }}
+                class="gradiant target bg-primary rounded-sm w-full block outline-none" readonly>{note.note}</pre>
                 <input hidden id={note.id} type="checkbox" name="selected_notes" value={note.id} />
               </label>
             </div>

@@ -1,4 +1,5 @@
 ---
+import Navbar from '@/components/Navbar.astro'
 import Layout from '../layouts/Layout.astro'
 import { saveFolder } from '../lib/api'
 import BackArrow from '@/icons/back.svg?raw'
@@ -18,6 +19,11 @@ if (Astro.request.method === 'POST') {
 ---
 
 <Layout>
+  <Navbar>
+    <button form="main" slot="left" class="text-accent"> Delete</button>
+
+    <a slot="right" class="text-base" href={`/folder/${Astro.params.id}/notes`}>Cancel</a>
+  </Navbar>
   <div class="h-[66px] p-5 flex gap-5 items-center border-b border-primary">
     <a href="/" class="w-6.5 inline-grid place-items-center aspect-square text-text-primary">
       <Fragment set:html={BackArrow} />
@@ -32,7 +38,7 @@ if (Astro.request.method === 'POST') {
     <div class="mt-5 px-5">
       <div class="text-center">
         <span class="inline-grid place-items-center leading-none rounded-full text-icon aspect-square w-19 bg-primary outline-none text-center">
-          <input class="bg-transparent align-top text-icon block px-0 w-[2.5ch]"  maxlength="2" type="text" name="icon" value={emojis[4]} />
+          <input class="bg-transparent align-top text-icon block px-0 w-[2.5ch]" maxlength="2" type="text" name="icon" value={emojis[4]} />
         </span>
         <p class="mt-2 text-base">Folder Icon</p>
       </div>

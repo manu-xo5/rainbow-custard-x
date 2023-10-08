@@ -33,44 +33,46 @@ if (folder == null || !folder.title) {
 }
 ---
 
+<style is:inline>
+  .gradiant {
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.4) 100%);
+  }
+  .grow-wrap {
+    display: grid;
+  }
+  .grow-wrap::after {
+    content: attr(data-replicated-value) ' ';
+    white-space: pre-wrap;
+    visibility: hidden;
+    height: 100%;
+  }
+
+  .grow-wrap > textarea,
+  .grow-wrap::after {
+    font: inherit;
+    padding: 0.5rem;
+    word-wrap: break-word;
+    text-wrap: unrestricted;
+
+    /* Place on top of each other */
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .grow-wrap > textarea {
+    resize: none;
+  }
+</style>
 <Layout>
   <Navbar title="Memo">
-    <a slot="left" href="/">
+    <a slot="left" href="/" class="aspect-square place-items-center">
       <Fragment set:html={BackArrow} />
     </a>
 
     <a slot="right" class="text-base" href={`/folder/${Astro.params.id}/notes-edit`}>Edit</a>
   </Navbar>
 
-  <style is:inline>
-    .gradiant {
-background-image: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
-
-    }
-    .grow-wrap {
-      display: grid;
-    }
-    .grow-wrap::after {
-      content: attr(data-replicated-value) ' ';
-      white-space: pre-wrap;
-      visibility: hidden;
-      height: 100%;
-    }
-
-    .grow-wrap > textarea,
-    .grow-wrap::after {
-      font: inherit;
-      padding: 0.5rem;
-      word-wrap: break-word;
-      text-wrap: unrestricted;
-
-      /* Place on top of each other */
-      grid-area: 1 / 1 / 2 / 2;
-    }
-  </style>
-
   <main>
-    <div class="flex py-4.5 px-5 border-b border-primary items-center">
+    <div class="flex py-3 px-5 border-b border-primary items-center">
       <div class="h-[14px] leading-[14px]">{folder.icon}</div>&nbsp;
       <div class="title capitalize flex items-center">
         {folder.title} | #{data.length}
@@ -85,14 +87,7 @@ background-image: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 10
     <div id="notes-list">
       {
         data.map((note: any) => (
-          <form
-            method="POST"
-            class="notes-form m-5"
-            hx-get="/abs"
-            hx-trigger="hold"
-            hx-select="body"
-            hx-target="body"
-          >
+          <form method="POST" class="notes-form m-5" hx-get="/abs" hx-trigger="hold" hx-select="body" hx-target="body">
             <div class="grow-wrap text-base leading-[24px]" data-replicated-value={note.note}>
               <input type="hidden" name="folder_id" value={Astro.params.id} />
               <input type="hidden" name="note_id" value={note.id} />
@@ -108,7 +103,7 @@ background-image: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 10
                 this.parentNode.dataset.replicatedValue = this.value;
                 "
                 style={{
-                  backgroundColor: folder.accentColor || "#777"
+                  backgroundColor: folder.accentColor !== '#000000' ? folder.accentColor : '#777',
                 }}
                 class="gradiant rounded-sm w-full block outline-none"
               >{note.note}</textarea>
@@ -118,22 +113,19 @@ background-image: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 10
       }
 
       <form class="notes-form m-5">
-        <div class="grow-wrap text-base leading-[24px]" data-replicated-value="">
-          <input type="hidden" name="folder_id" value={Astro.params.id} />
-          <input type="hidden" name="_action" value="new_note" />
-          <textarea
-            name="note"
-            hx-trigger="keyup changed delay:1000"
-            hx-post=""
-            hx-select="#notes-list"
-            hx-target="#notes-list"
-            hx-sync="this:replace"
-            oninput="
-            this.parentNode.dataset.replicatedValue = this.value;
-            "
-            class="bg-primary rounded-sm w-full block outline-none"
-            placeholder="Add New Note..."></textarea>
-        </div>
+        <input type="hidden" name="folder_id" value={Astro.params.id} />
+        <input type="hidden" name="note" value="" />
+        <input type="hidden" name="_action" value="new_note" />
+        <button
+          hx-post=""
+          hx-sync="this:replace"
+          hx-select="#notes-list"
+          hx-target="#notes-list"
+          class="py-1.5 bg-primary rounded-sm w-full flex justify-center items-center"
+        >
+          Add New Note
+          <span class="ml-2.5 htmx-indicator fill-white"><Fragment set:html={Loader} /></span>
+        </button>
       </form>
     </div>
   </main>

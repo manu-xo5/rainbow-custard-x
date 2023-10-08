@@ -31,7 +31,7 @@ module.exports = {
         19: '76px',
       },
       fontSize: {
-        title: ['1.25rem', { lineHeight: '1.3em' }],
+        title: ['1.125rem', { lineHeight: '1.3em' }],
         sm: ['0.875rem', { lineHeight: '1.2em' }],
         base: ['14px', { lineHeight: '1.285em' }],
         icon: ['44px', '44px'],
