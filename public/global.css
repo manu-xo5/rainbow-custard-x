@@ -593,10 +593,6 @@ html {
   margin-left: auto;
 }
 
-.mr-auto {
-  margin-right: auto;
-}
-
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -611,10 +607,6 @@ html {
 
 .inline-block {
   display: inline-block;
-}
-
-.inline {
-  display: inline;
 }
 
 .flex {
@@ -651,14 +643,6 @@ html {
 
 .h-\[66px\] {
   height: 66px;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.h-\[23px\] {
-  height: 23px;
 }
 
 .w-19 {
@@ -756,10 +740,6 @@ html {
   border-radius: 5px;
 }
 
-.border {
-  border-width: 1px;
-}
-
 .border-b {
   border-bottom-width: 1px;
 }
@@ -800,10 +780,6 @@ html {
   padding: 0.5rem;
 }
 
-.p-3 {
-  padding: 0.75rem;
-}
-
 .p-4 {
   padding: 1rem;
 }
@@ -835,21 +811,6 @@ html {
 .py-1\.5 {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.py-4\.5 {
-  padding-top: 1.125rem;
-  padding-bottom: 1.125rem;
-}
-
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
 }
 
 .py-3 {
@@ -955,15 +916,6 @@ html {
   color: rgb(113 113 122 / var(--tw-text-opacity));
 }
 
-.\[\&\:nth-child\(3\)\]\:bg-red-900:nth-child(3) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(127 29 29 / var(--tw-bg-opacity));
-}
-
-.\[\&\:nth-child\(3\)\]\:opacity-0:nth-child(3) {
-  opacity: 0;
-}
-
 .\[\&\>\:nth-child\(1\)\]\:mr-auto>:nth-child(1) {
   margin-right: auto;
 }
@@ -980,11 +932,6 @@ html {
   align-self: stretch;
 }
 
-.\[\&\>\:nth-child\(1\)\]\:bg-red-900>:nth-child(1) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(127 29 29 / var(--tw-bg-opacity));
-}
-
 .\[\&\>\:nth-child\(3\)\]\:ml-auto>:nth-child(3) {
   margin-left: auto;
 }
@@ -993,24 +940,10 @@ html {
   display: grid;
 }
 
-.\[\&\>\:nth-child\(3\)\]\:place-items-center>:nth-child(3) {
-  place-items: center;
-}
-
 .\[\&\>\:nth-child\(3\)\]\:items-center>:nth-child(3) {
   align-items: center;
 }
 
 .\[\&\>\:nth-child\(3\)\]\:self-stretch>:nth-child(3) {
   align-self: stretch;
-}
-
-.\[\&\>\:nth-child\(3\)\]\:bg-red-900>:nth-child(3) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(127 29 29 / var(--tw-bg-opacity));
-}
-
-.\[\&_\#right\]\:bg-red-900 #right {
-  --tw-bg-opacity: 1;
-  background-color: rgb(127 29 29 / var(--tw-bg-opacity));
 }

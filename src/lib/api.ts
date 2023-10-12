@@ -1,6 +1,7 @@
 import { doc, orderBy, query, deleteDoc, getDocs, addDoc, setDoc, collection, getDoc, writeBatch } from 'firebase/firestore'
 import { db } from './firebase'
 import * as O from './O'
+import { updateCacheControl } from '@/lib/cacheControl'
 
 const notesCollectionFor = (folderId: string) => collection(db, 'folders', folderId, 'notes')
 
